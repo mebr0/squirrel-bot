@@ -1,0 +1,27 @@
+# Multistage dockerfile for building docker images on non-unix systems
+#
+# Build image:
+# docker build -f build/Dockerfile.multi -t ghcr.io/mebr0/squirrel-bot .
+#
+# Run container by passing env variables by flag -e (list of env variables in README.md):
+# docker run ghcr.io/mebr0/squirrel-bot:latest
+#
+# Build binary in separate docker container with golang
+FROM golang:1.15-alpine3.12 AS builder
+
+WORKDIR /root/
+
+COPY . .
+
+RUN go mod download
+RUN GOOS=linux go build -ldflags="-w -s" -v -o app ./cmd/main.go
+
+# Transfer artifacts from builder stage to clean alpine container
+FROM alpine:latest
+
+WORKDIR /root/
+
+COPY --from=builder app .
+COPY --from=builder configs configs
+
+CMD ["./app"]
