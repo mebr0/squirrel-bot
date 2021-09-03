@@ -21,7 +21,7 @@ FROM alpine:latest
 
 WORKDIR /root/
 
-COPY --from=builder app .
-COPY --from=builder configs configs
+COPY --from=builder /root/app .
+COPY --from=builder /root/configs configs/
 
 CMD ["./app"]
