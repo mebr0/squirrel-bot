@@ -63,7 +63,7 @@ P4: %s`, b.game.Score.First, b.game.Score.Second, b.game.Board.Round.First, b.ga
 	_, err := b.bot.Send(msg)
 
 	if err != nil {
-		fmt.Println(err.Error())
+		b.log.Error("error editing message - " + err.Error())
 	}
 
 	mark := tgbotapi.NewEditMessageReplyMarkup(b.game.Players[0].ID, b.game.Players[0].Message,
@@ -72,7 +72,7 @@ P4: %s`, b.game.Score.First, b.game.Score.Second, b.game.Board.Round.First, b.ga
 	_, err = b.bot.Send(mark)
 
 	if err != nil {
-		fmt.Println(err.Error())
+		b.log.Error("error editing message inline keyboard" + err.Error())
 	}
 
 	time.Sleep(b.speed)

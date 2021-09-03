@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 )
@@ -39,26 +38,28 @@ func (g *Game) BotsTurn() bool {
 	return g.Players[g.Board.CurrentTurn].Bot
 }
 
-func (g *Game) BotMove() {
-	cards := g.possibleTurns(g.Board.CurrentTurn)
+func (g *Game) BotMove() error {
+	cards, err := g.possibleTurns(g.Board.CurrentTurn)
 
-	fmt.Println(cards)
+	if err != nil {
+		return err
+	}
 
 	if (len(cards)) == 0 {
-		fmt.Println("ZERO LENGTH")
+		return ErrNoValidMoves
 	}
 
 	rand.Seed(time.Now().Unix())
 
 	card := cards[rand.Intn(len(cards))]
 
-	err := g.Throw(card)
-
-	if err != nil {
-		if err != ErrNotYourTurn {
-			fmt.Println(err.Error())
+	if err = g.Throw(card); err != nil {
+		if err != ErrCardNotFound && err != ErrNotYourTurn {
+			return err
 		}
 	}
+
+	return nil
 }
 
 func (g *Game) UpdateChats(messageIDs [playersCount]int) {
@@ -94,7 +95,7 @@ func (g *Game) Throw(card Card) error {
 	return nil
 }
 
-func (g *Game) possibleTurns(index uint8) []Card {
+func (g *Game) possibleTurns(index uint8) ([]Card, error) {
 	var cards []Card
 
 	for _, c := range g.Players[index].Hand {
@@ -105,14 +106,17 @@ func (g *Game) possibleTurns(index uint8) []Card {
 		err := g.canThrow(index, c)
 
 		if err != nil {
-			fmt.Println(err.Error())
+			if err != ErrMustThrowTrump && err != ErrMustThrowOtherCard {
+				return nil, err
+			}
+
 			continue
 		}
 
 		cards = append(cards, c)
 	}
 
-	return cards
+	return cards, nil
 }
 
 func (g *Game) canThrow(index uint8, card Card) error {

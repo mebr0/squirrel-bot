@@ -14,4 +14,6 @@ var (
 
 	ErrMustThrowTrump     = errors.New("must throw trump")
 	ErrMustThrowOtherCard = errors.New("must throw other card")
+
+	ErrNoValidMoves = errors.New("no valid moves")
 )

@@ -2,21 +2,23 @@ package telegram
 
 import (
 	"context"
-	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/mebr0/squirrel-bot/internal/game"
+	"go.uber.org/zap"
 	"time"
 )
 
 type Bot struct {
 	bot   *tgbotapi.BotAPI
 	game  *game.Game
+	log   *zap.Logger
 	speed time.Duration
 }
 
-func NewBot(bot *tgbotapi.BotAPI, speed time.Duration) *Bot {
+func NewBot(bot *tgbotapi.BotAPI, log *zap.Logger, speed time.Duration) *Bot {
 	return &Bot{
 		bot:   bot,
+		log:   log,
 		speed: speed,
 	}
 }
@@ -33,7 +35,7 @@ func (b *Bot) Start() error {
 	for update := range updates {
 		if update.CallbackQuery != nil {
 			if err := b.handleCallback(update.CallbackQuery); err != nil {
-				fmt.Println(err.Error())
+				b.log.Error("error handling callback query - " + err.Error())
 			}
 		}
 
@@ -44,7 +46,7 @@ func (b *Bot) Start() error {
 		// Handle commands
 		if update.Message.IsCommand() {
 			if err := b.handleCommand(update.Message); err != nil {
-				fmt.Println(err.Error())
+				b.log.Error("error handling command - " + err.Error())
 			}
 
 			continue
@@ -53,7 +55,7 @@ func (b *Bot) Start() error {
 		// Handle regular messages
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 		if _, err = b.bot.Send(msg); err != nil {
-			fmt.Println(err.Error())
+			b.log.Error("error handling message text - " + err.Error())
 		}
 	}
 

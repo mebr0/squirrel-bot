@@ -17,22 +17,24 @@ func (b *Bot) handleCallback(callback *tgbotapi.CallbackQuery) error {
 
 	cardN := game.Card(uint8(card))
 
-	if err := b.game.Throw(cardN); err != nil {
+	if err = b.game.Throw(cardN); err != nil {
 		return err
 	}
 
 	b.draw()
 
-	if err := b.processGame(); err != nil {
+	if err = b.processGame(); err != nil {
 		return err
 	}
 
 	for b.game.BotsTurn() {
-		b.game.BotMove()
+		if err = b.game.BotMove(); err != nil {
+			return err
+		}
 
 		b.draw()
 
-		if err := b.processGame(); err != nil {
+		if err = b.processGame(); err != nil {
 			return err
 		}
 	}

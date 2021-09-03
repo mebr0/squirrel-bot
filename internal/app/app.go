@@ -2,10 +2,12 @@ package app
 
 import (
 	"context"
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/mebr0/squirrel-bot/internal/config"
 	"github.com/mebr0/squirrel-bot/internal/telegram"
-	"log"
+	"github.com/mebr0/squirrel-bot/pkg/logging"
+	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"syscall"
@@ -15,23 +17,38 @@ import (
 func Run(configPath string) {
 	cfg := config.LoadConfig(configPath)
 
+	// Logging
+	log, err := logging.NewLogger(cfg.Log.Level)
+
+	if err != nil {
+		fmt.Println("error initializing logger instance - " + err.Error())
+		return
+	}
+
+	defer func(log *zap.Logger) {
+		err := log.Sync()
+		if err != nil {
+			log.Warn("error during flushing entries - " + err.Error())
+		}
+	}(log)
+
 	botApi, err := tgbotapi.NewBotAPI(cfg.Telegram.BotToken)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("error initializing telegram client - " + err.Error())
 	}
 
 	//botApi.Debug = true
 
 	// Telegram bot
-	bot := telegram.NewBot(botApi, cfg.Game.Speed)
+	bot := telegram.NewBot(botApi, log, cfg.Game.Speed)
 	go func() {
 		if err = bot.Start(); err != nil {
-			log.Fatal(err)
+			log.Fatal("error while bot polling - " + err.Error())
 		}
 	}()
 
-	log.Println("Server started")
+	log.Info("Server started")
 
 	// Graceful Shutdown
 	quit := make(chan os.Signal, 1)
@@ -45,6 +62,6 @@ func Run(configPath string) {
 	defer shutdown()
 
 	if err = bot.Stop(ctx); err != nil {
-		log.Println("failed to stop server: " + err.Error())
+		log.Error("failed to stop server - " + err.Error())
 	}
 }
