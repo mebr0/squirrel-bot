@@ -107,4 +107,4 @@ jobs:
         run: chmod +x app
 
       - name: Build Docker Image
-        run: docker build -f build/Dockerfile -t ghcr.io/mebr0/squirrel-bot
+        run: docker build -f build/Dockerfile -t ghcr.io/mebr0/squirrel-bot .
