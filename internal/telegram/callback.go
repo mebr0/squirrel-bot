@@ -2,7 +2,7 @@ package telegram
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/mebr0/squirrel-bot/internal/game"
+	"github.com/mebr0/squirrel-bot/pkg/squirrel"
 	"strconv"
 	"strings"
 )
@@ -15,7 +15,7 @@ func (b *Bot) handleCallback(callback *tgbotapi.CallbackQuery) error {
 		return err
 	}
 
-	cardN := game.Card(uint8(card))
+	cardN := squirrel.Card(uint8(card))
 
 	if err = b.game.Throw(cardN); err != nil {
 		return err

@@ -1,4 +1,4 @@
-package game
+package squirrel
 
 type Board struct {
 	Cards [playersCount]Card

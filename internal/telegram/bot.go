@@ -3,14 +3,14 @@ package telegram
 import (
 	"context"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/mebr0/squirrel-bot/internal/game"
+	"github.com/mebr0/squirrel-bot/pkg/squirrel"
 	"go.uber.org/zap"
 	"time"
 )
 
 type Bot struct {
 	bot   *tgbotapi.BotAPI
-	game  *game.Game
+	game  *squirrel.Game
 	log   *zap.Logger
 	speed time.Duration
 }

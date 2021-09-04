@@ -1,4 +1,4 @@
-package game
+package squirrel
 
 // Hand is collection of Card of one single Player
 type Hand [handSize]Card
