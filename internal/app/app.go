@@ -24,6 +24,7 @@ func Run(configPath string) {
 		return
 	}
 
+	//nolint:errcheck
 	//goland:noinspection GoUnhandledErrorResult
 	defer log.Sync()
 
