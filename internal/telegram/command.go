@@ -3,7 +3,7 @@ package telegram
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/mebr0/squirrel-bot/internal/game"
+	"github.com/mebr0/squirrel-bot/pkg/squirrel"
 	"strconv"
 )
 
@@ -17,7 +17,7 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 }
 
 func (b *Bot) handleStartCommand(message *tgbotapi.Message) error {
-	b.game = game.NewGame([4]int64{message.Chat.ID, -1, -1, -1})
+	b.game = squirrel.NewGame([4]int64{message.Chat.ID, -1, -1, -1})
 
 	b.game.StartFirstRound()
 
@@ -49,7 +49,7 @@ P4: %s`, b.game.Score.First, b.game.Score.Second, b.game.Board.Round.First, b.ga
 	return nil
 }
 
-func inlineKeyboard(cards game.Hand) tgbotapi.InlineKeyboardMarkup {
+func inlineKeyboard(cards squirrel.Hand) tgbotapi.InlineKeyboardMarkup {
 	keyboard := make([][]tgbotapi.InlineKeyboardButton, 0)
 
 	for i := 0; i < 2; i++ {
