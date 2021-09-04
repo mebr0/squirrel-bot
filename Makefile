@@ -1,6 +1,6 @@
 .PHONY:
 .SILENT:
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL := compile
 
 lint:
 	golangci-lint run
@@ -11,10 +11,10 @@ test:
 cover: test
 	go tool cover -func=cover.out
 
-build:
+compile:
 	go mod download && CGO_ENABLED=0 GOOS=linux go build -o app ./cmd/main.go
 
-run: build
+run: compile
 	./app
 
 fmt:

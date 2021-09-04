@@ -7,7 +7,6 @@ import (
 	"github.com/mebr0/squirrel-bot/internal/config"
 	"github.com/mebr0/squirrel-bot/internal/telegram"
 	"github.com/mebr0/squirrel-bot/pkg/logging"
-	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"syscall"
@@ -25,12 +24,9 @@ func Run(configPath string) {
 		return
 	}
 
-	defer func(log *zap.Logger) {
-		err := log.Sync()
-		if err != nil {
-			log.Warn("error during flushing entries - " + err.Error())
-		}
-	}(log)
+	//nolint:errcheck
+	//goland:noinspection GoUnhandledErrorResult
+	defer log.Sync()
 
 	botApi, err := tgbotapi.NewBotAPI(cfg.Telegram.BotToken)
 
