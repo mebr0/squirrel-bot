@@ -1,5 +1,7 @@
 package squirrel
 
+import "strings"
+
 // Hand is collection of Card of one single Player
 type Hand [handSize]Card
 
@@ -20,34 +22,51 @@ func emptyHand() *Hand {
 	}
 }
 
-func (h Hand) ToString() string {
-	res := ""
-
-	for _, c := range h {
-		res += c.Symbol() + " "
-	}
-
-	return res
-}
-
 type Players [playersCount]*Player
 
 type Player struct {
-	ID      int64
-	Message int
-	Hand    *Hand
-	Bot     bool
+	ID       int64
+	Message  int
+	Username string
+	Name     string
+	LastName string
+	Hand     *Hand
+	Bot      bool
 }
 
 const (
 	playersCount uint8 = 4
 )
 
-func newPlayer(id int64) *Player {
+func newWithBots(player *Player) *Players {
+	var players [playersCount]*Player
+
+	players[0] = player
+	players[1] = newBot()
+	players[2] = newBot()
+	players[3] = newBot()
+
+	return (*Players)(&players)
+}
+
+func (p *Players) Shifted(index int) *Players {
+	shifted := append(p[index:], p[:index]...)
+
+	var players [playersCount]*Player
+
+	copy(players[:], shifted)
+
+	return (*Players)(&players)
+}
+
+func NewPlayer(id int64, username, name, lastName string) *Player {
 	return &Player{
-		ID:   id,
-		Hand: emptyHand(),
-		Bot:  false,
+		ID:       id,
+		Username: username,
+		Name:     name,
+		LastName: lastName,
+		Hand:     emptyHand(),
+		Bot:      false,
 	}
 }
 
@@ -112,4 +131,18 @@ func (p *Player) throw(card Card) {
 			break
 		}
 	}
+}
+
+func (p *Player) NickName() string {
+	if p.Bot {
+		return "Bot"
+	}
+
+	if p.Username != "" {
+		return "@" + p.Username
+	}
+
+	fullName := p.Name + " " + p.LastName
+
+	return strings.TrimSpace(fullName)
 }

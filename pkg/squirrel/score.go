@@ -1,5 +1,7 @@
 package squirrel
 
+import "fmt"
+
 type Team uint8
 
 const (
@@ -97,6 +99,14 @@ func (s *Score) finished() bool {
 //	s.Second = 0
 //}
 
+func (s *Score) String(index Team) string {
+	if index == firstTeam {
+		return fmt.Sprintf("%d:%d", s.First, s.Second)
+	}
+
+	return fmt.Sprintf("%d:%d", s.Second, s.First)
+}
+
 const (
 	roundMinPerTime      = 0
 	roundMaxPerTime      = 44
@@ -165,4 +175,12 @@ func (s *RoundScore) winner() Team {
 func (s *RoundScore) refresh() {
 	s.First = 0
 	s.Second = 0
+}
+
+func (s *RoundScore) String(index Team) string {
+	if index == firstTeam {
+		return fmt.Sprintf("%d:%d", s.First, s.Second)
+	}
+
+	return fmt.Sprintf("%d:%d", s.Second, s.First)
 }

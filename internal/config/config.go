@@ -23,9 +23,12 @@ type Config struct {
 		BotToken string `yaml:"bot-token" envconfig:"TELEGRAM_BOT_TOKEN"`
 	} `yaml:"telegram"`
 
-	Game struct {
-		Speed time.Duration `yaml:"speed" envconfig:"GAME_SPEED"`
-	} `yaml:"game"`
+	Game Game `yaml:"game"`
+}
+
+type Game struct {
+	Debug bool          `yaml:"debug" envconfig:"GAME_DEBUG"`
+	Speed time.Duration `yaml:"speed" envconfig:"GAME_SPEED"`
 }
 
 func LoadConfig(configPath string) *Config {
