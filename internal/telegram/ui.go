@@ -23,7 +23,7 @@ func (b *Bot) drawGame(playerIndex int) string {
 	players := b.game.Players.Shifted(playerIndex)
 	cards := b.game.Board.ShiftedCards(playerIndex)
 
-	ui := "```"
+	ui := "```\n"
 	row := ""
 
 	row += fmt.Sprintf("Score: %s | Trump: %s | Round: %d", score, trump, roundsCount)
@@ -43,7 +43,7 @@ func (b *Bot) drawGame(playerIndex int) string {
 	ui += alignCenter(cards[2].Symbol()) + "\n"
 	ui += strings.Repeat(" ", width) + "\n"
 
-	ui += spaceBetween(players[1].NickName(), cards[1].Symbol(), cards[3].Symbol(), players[3].NickName()) + "\n"
+	ui += spaceBetween(players[1].NickName(), cards[1], cards[3], players[3].NickName()) + "\n"
 
 	ui += strings.Repeat(" ", width) + "\n"
 	ui += alignCenter(cards[0].Symbol()) + "\n"
@@ -62,10 +62,29 @@ func alignCenter(text string) string {
 	return spaces + text + spaces
 }
 
-func spaceBetween(nickName1, card1, card3, nickName3 string) string {
-	result := nickName1 + strings.Repeat(" ", width / 2 - len(nickName1) - len([]rune(card1)) - boardUnit) + card1
-	result += strings.Repeat(" ", 2 * boardUnit)
-	result += card3 + strings.Repeat(" ", width / 2 - len(nickName3) - len([]rune(card3)) - boardUnit) + nickName3
+func spaceBetween(nickName1 string, card1 squirrel.Card, card3 squirrel.Card, nickName3 string) string {
+	result := nickName1 + strings.Repeat(" ", width / 2 - len(nickName1) - len([]rune(card1.Symbol())) - boardUnit) +
+		card1.Symbol()
+	result += strings.Repeat(" ", boardUnit)
+
+	var thirdCardDelta = 0
+	var boardDelta = 0
+
+	if !card3.IsEmpty() {
+		if !card1.IsEmpty() {
+			boardDelta = 17
+			thirdCardDelta = 10
+		} else {
+			thirdCardDelta = 8
+		}
+	} else {
+		if !card1.IsEmpty() {
+			boardDelta = 34
+		}
+	}
+
+	result += strings.Repeat(" ", boardUnit +boardDelta)
+	result += card3.Symbol() + strings.Repeat(" ", width / 2 - len(nickName3) - len([]rune(card3.Symbol())) - boardUnit +thirdCardDelta) + nickName3
 
 	return result
 }
