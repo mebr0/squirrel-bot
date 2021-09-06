@@ -114,7 +114,7 @@ func shuffledDeck() []Card {
 
 func (c Card) Symbol() string {
 	if c == emptyCard {
-		return "EM"
+		return ""
 	}
 
 	result := ""

@@ -59,6 +59,7 @@ func (b *Bot) draw() {
 			ReplyMarkup: &keyboard,
 		},
 		Text: ui,
+		ParseMode: "MarkdownV2",
 	}
 
 	_, err := b.bot.Send(msg)
