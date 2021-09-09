@@ -11,7 +11,7 @@ import (
 
 type Bot struct {
 	bot    *tgbotapi.BotAPI
-	games   map[uuid.UUID]*squirrel.Game
+	games  map[uuid.UUID]*squirrel.Game
 	log    *zap.Logger
 	config config.Game
 }
@@ -19,7 +19,7 @@ type Bot struct {
 func NewBot(bot *tgbotapi.BotAPI, log *zap.Logger, config config.Game) *Bot {
 	return &Bot{
 		bot:    bot,
-		games: map[uuid.UUID]*squirrel.Game{},
+		games:  map[uuid.UUID]*squirrel.Game{},
 		log:    log,
 		config: config,
 	}

@@ -13,7 +13,7 @@ const (
 	boardUnit = 7
 )
 
-func (b *Bot) drawGame(gameId uuid.UUID, playerIndex int) string {
+func (b *Bot) drawGame(gameId uuid.UUID, playerIndex int, finished bool) string {
 	game := b.games[gameId]
 	team := squirrel.Team(playerIndex%2 + 1)
 
@@ -27,6 +27,30 @@ func (b *Bot) drawGame(gameId uuid.UUID, playerIndex int) string {
 	ui := "```\n"
 	row := ""
 
+	if finished {
+		winnerTeam, err := game.WinnerTeam()
+
+		if err != nil {
+			b.log.Warn("Game not finished, while it supposed to - " + err.Error())
+		} else {
+			switch winnerTeam {
+			case squirrel.FirstTeam:
+				ui += "GAME FINISHED\n"
+				row += fmt.Sprintf("Winners: %s and %s", game.Players[0].NickName(), game.Players[2].NickName())
+			case squirrel.SecondTeam:
+				ui += "GAME FINISHED\n"
+				row += fmt.Sprintf("Winners: %s and %s", game.Players[1].NickName(), game.Players[3].NickName())
+			default:
+				b.log.Warn("Game not finished, while it supposed to - " + err.Error())
+			}
+
+			row += strings.Repeat(" ", width-len(row)) + "\n"
+			ui += row
+			ui += strings.Repeat("-", width) + "\n"
+		}
+	}
+
+	row = ""
 	row += fmt.Sprintf("Score: %s | Trump: %s | Round: %d", score, trump, roundsCount)
 	row += strings.Repeat(" ", width-len(row)) + "\n"
 	ui += row

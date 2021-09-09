@@ -24,7 +24,7 @@ func (b *Bot) handleGameCommand(message *tgbotapi.Message) error {
 
 	b.games[id].StartFirstRound()
 
-	ui := b.drawGame(id, 0)
+	ui := b.drawGame(id, 0, false)
 
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{

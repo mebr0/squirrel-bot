@@ -11,11 +11,11 @@ import (
 
 const (
 	// Common constants for callback data
-	callbackPrefix = "sqrl"
+	callbackPrefix        = "sqrl"
 	callbackTextSeparator = "_"
 
 	// Game constants for callback data
-	gameCallback = "game"
+	gameCallback            = "game"
 	gameCallbackThrowAction = "throw"
 )
 
@@ -91,6 +91,10 @@ func (b *Bot) handleGameCallbackThrowActions(callback *tgbotapi.CallbackQuery, g
 	b.draw(gameId)
 
 	if err = b.processGame(gameId); err != nil {
+		if err == squirrel.ErrGameFinished {
+			return nil
+		}
+
 		return err
 	}
 
@@ -102,6 +106,10 @@ func (b *Bot) handleGameCallbackThrowActions(callback *tgbotapi.CallbackQuery, g
 		b.draw(gameId)
 
 		if err = b.processGame(gameId); err != nil {
+			if err == squirrel.ErrGameFinished {
+				return nil
+			}
+
 			return err
 		}
 	}
@@ -116,7 +124,7 @@ func throwCardCallback(gameId uuid.UUID, card squirrel.Card) string {
 	return newCallback(callbackPrefix, gameCallback, gameId, gameCallbackThrowAction, cardString)
 }
 
-func newCallback(tokens... interface{}) string {
+func newCallback(tokens ...interface{}) string {
 	values := make([]string, len(tokens))
 
 	for i, v := range tokens {
