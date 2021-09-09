@@ -3,8 +3,8 @@ package telegram
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/google/uuid"
 	"github.com/mebr0/squirrel-bot/pkg/squirrel"
-	"strconv"
 	"strings"
 )
 
@@ -13,19 +13,44 @@ const (
 	boardUnit = 7
 )
 
-func (b *Bot) drawGame(playerIndex int) string {
+func (b *Bot) drawGame(gameId uuid.UUID, playerIndex int, finished bool) string {
+	game := b.games[gameId]
 	team := squirrel.Team(playerIndex%2 + 1)
 
-	score := b.game.Score.String(team)
-	trump := b.game.Board.Trump.String()
-	roundsCount := b.game.RoundsCount
-	roundScore := b.game.Board.Round.String(team)
-	players := b.game.Players.Shifted(playerIndex)
-	cards := b.game.Board.ShiftedCards(playerIndex)
+	score := game.Score.String(team)
+	trump := game.Board.Trump.String()
+	roundsCount := game.RoundsCount
+	roundScore := game.Board.Round.String(team)
+	players := game.Players.Shifted(playerIndex)
+	cards := game.Board.ShiftedCards(playerIndex)
 
 	ui := "```\n"
 	row := ""
 
+	if finished {
+		winnerTeam, err := game.WinnerTeam()
+
+		if err != nil {
+			b.log.Warn("Game not finished, while it supposed to - " + err.Error())
+		} else {
+			switch winnerTeam {
+			case squirrel.FirstTeam:
+				ui += "GAME FINISHED\n"
+				row += fmt.Sprintf("Winners: %s and %s", game.Players[0].NickName(), game.Players[2].NickName())
+			case squirrel.SecondTeam:
+				ui += "GAME FINISHED\n"
+				row += fmt.Sprintf("Winners: %s and %s", game.Players[1].NickName(), game.Players[3].NickName())
+			default:
+				b.log.Warn("Game not finished, while it supposed to - " + err.Error())
+			}
+
+			row += strings.Repeat(" ", width-len(row)) + "\n"
+			ui += row
+			ui += strings.Repeat("-", width) + "\n"
+		}
+	}
+
+	row = ""
 	row += fmt.Sprintf("Score: %s | Trump: %s | Round: %d", score, trump, roundsCount)
 	row += strings.Repeat(" ", width-len(row)) + "\n"
 	ui += row
@@ -93,8 +118,8 @@ func spaceBetween(nickName1 string, card1 squirrel.Card, card3 squirrel.Card, ni
 	return result
 }
 
-func (b *Bot) inlineKeyboard(index int) tgbotapi.InlineKeyboardMarkup {
-	cards := b.game.Players[index].Hand
+func (b *Bot) inlineKeyboard(gameId uuid.UUID, index int) tgbotapi.InlineKeyboardMarkup {
+	cards := b.games[gameId].Players[index].Hand
 
 	keyboard := make([][]tgbotapi.InlineKeyboardButton, 0)
 
@@ -105,7 +130,7 @@ func (b *Bot) inlineKeyboard(index int) tgbotapi.InlineKeyboardMarkup {
 			card := cards[i*4+j]
 
 			if !card.IsEmpty() {
-				callback := "sqrl_throw_" + strconv.FormatUint(uint64(card), 10)
+				callback := throwCardCallback(gameId, card)
 
 				keyboard[i] = append(keyboard[i], tgbotapi.InlineKeyboardButton{
 					Text:         card.Symbol(),

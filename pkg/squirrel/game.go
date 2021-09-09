@@ -28,6 +28,10 @@ func (g *Game) BotsTurn() bool {
 }
 
 func (g *Game) BotMove() error {
+	if g.Finished() {
+		return ErrGameFinished
+	}
+
 	cards, err := g.possibleTurns(g.Board.CurrentTurn)
 
 	if err != nil {
@@ -62,6 +66,10 @@ func (g *Game) StartFirstRound() {
 }
 
 func (g *Game) Throw(card Card) error {
+	if g.Finished() {
+		return ErrGameFinished
+	}
+
 	playerIndex := g.Players.playerIndexByCard(card)
 
 	if playerIndex == playersCount {
@@ -138,18 +146,24 @@ func (g *Game) canThrow(index uint8, card Card) error {
 	return nil
 }
 
-func (g *Game) Finished() (bool, error) {
+func (g *Game) WinnerTeam() (Team, error) {
 	if g.Score.finished() {
-		return true, nil
+		return g.Score.winner(), nil
 	}
 
-	return false, nil
+	return 0, ErrGameNotFinished
+}
+
+func (g *Game) Finished() bool {
+	return g.Score.finished()
 }
 
 func (g *Game) RoundFinished() (bool, error) {
 	if g.Board.roundFinished() {
-		if err := g.nextRound(); err != nil {
-			return true, err
+		if !g.Finished() {
+			if err := g.nextRound(); err != nil {
+				return true, err
+			}
 		}
 
 		return true, nil

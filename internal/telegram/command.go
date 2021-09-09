@@ -2,6 +2,7 @@ package telegram
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/google/uuid"
 	"github.com/mebr0/squirrel-bot/pkg/squirrel"
 )
 
@@ -17,16 +18,18 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 func (b *Bot) handleGameCommand(message *tgbotapi.Message) error {
 	player := squirrel.NewPlayer(message.Chat.ID, message.Chat.UserName, message.Chat.FirstName, message.Chat.LastName)
 
-	b.game = squirrel.NewGameWithBots(player)
+	id := uuid.New()
 
-	b.game.StartFirstRound()
+	b.games[id] = squirrel.NewGameWithBots(player)
 
-	ui := b.drawGame(0)
+	b.games[id].StartFirstRound()
+
+	ui := b.drawGame(id, 0, false)
 
 	msg := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
 			ChatID:      message.Chat.ID,
-			ReplyMarkup: b.inlineKeyboard(0),
+			ReplyMarkup: b.inlineKeyboard(id, 0),
 		},
 		Text:                  ui,
 		ParseMode:             "MarkdownV2",
@@ -39,7 +42,7 @@ func (b *Bot) handleGameCommand(message *tgbotapi.Message) error {
 		return err
 	}
 
-	b.game.UpdateChats([4]int{m.MessageID, -1, -1, -1})
+	b.games[id].UpdateChats([4]int{m.MessageID, -1, -1, -1})
 
 	return nil
 }

@@ -6,8 +6,8 @@ type Team uint8
 
 const (
 	noTeam Team = iota
-	firstTeam
-	secondTeam
+	FirstTeam
+	SecondTeam
 	draw
 )
 
@@ -47,7 +47,7 @@ func (s *Score) add(value uint8, team Team) error {
 		return ErrScoreExceeded
 	}
 
-	if team == firstTeam {
+	if team == FirstTeam {
 		score := s.First + value
 
 		if score > maxScore {
@@ -59,7 +59,7 @@ func (s *Score) add(value uint8, team Team) error {
 		return nil
 	}
 
-	if team == secondTeam {
+	if team == SecondTeam {
 		score := s.Second + value
 
 		if score > maxScore {
@@ -82,17 +82,17 @@ func (s *Score) finished() bool {
 	return s.First > upperBoundToWin || s.Second > upperBoundToWin
 }
 
-//func (s *Score) winner() Team {
-//	if s.First > upperBoundToWin {
-//		return firstTeam
-//	}
-//
-//	if s.Second > upperBoundToWin {
-//		return secondTeam
-//	}
-//
-//	return noTeam
-//}
+func (s *Score) winner() Team {
+	if s.First > upperBoundToWin {
+		return FirstTeam
+	}
+
+	if s.Second > upperBoundToWin {
+		return SecondTeam
+	}
+
+	return noTeam
+}
 
 //func (s *Score) refresh() {
 //	s.First = 0
@@ -100,7 +100,7 @@ func (s *Score) finished() bool {
 //}
 
 func (s *Score) String(index Team) string {
-	if index == firstTeam {
+	if index == FirstTeam {
 		return fmt.Sprintf("%d:%d", s.First, s.Second)
 	}
 
@@ -135,12 +135,12 @@ func (s *RoundScore) add(value uint8, team Team) error {
 		return ErrScoreExceeded
 	}
 
-	if team == firstTeam {
+	if team == FirstTeam {
 		s.First += value
 		return nil
 	}
 
-	if team == secondTeam {
+	if team == SecondTeam {
 		s.Second += value
 		return nil
 	}
@@ -162,11 +162,11 @@ func (s *RoundScore) winner() Team {
 	}
 
 	if s.First > roundUpperBoundToWin {
-		return firstTeam
+		return FirstTeam
 	}
 
 	if s.Second > roundUpperBoundToWin {
-		return secondTeam
+		return SecondTeam
 	}
 
 	return noTeam
@@ -178,7 +178,7 @@ func (s *RoundScore) refresh() {
 }
 
 func (s *RoundScore) String(index Team) string {
-	if index == firstTeam {
+	if index == FirstTeam {
 		return fmt.Sprintf("%d:%d", s.First, s.Second)
 	}
 

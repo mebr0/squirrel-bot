@@ -7,6 +7,9 @@ var (
 	ErrScoreExceeded = errors.New("invalid score, overall score exceeded")
 	ErrInvalidTeam   = errors.New("invalid team to add score")
 
+	ErrGameFinished    = errors.New("game already finished")
+	ErrGameNotFinished = errors.New("game not finished")
+
 	ErrEmptyBoard = errors.New("empty board")
 
 	ErrCardNotFound = errors.New("card not found")
