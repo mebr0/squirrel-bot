@@ -29,7 +29,7 @@ func (b *Bot) handleGameCommand(message *tgbotapi.Message) error {
 			ReplyMarkup: b.inlineKeyboard(0),
 		},
 		Text:                  ui,
-		ParseMode: "MarkdownV2",
+		ParseMode:             "MarkdownV2",
 		DisableWebPagePreview: false,
 	}
 

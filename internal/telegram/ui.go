@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	width = 40
+	width     = 40
 	boardUnit = 7
 )
 
@@ -27,12 +27,12 @@ func (b *Bot) drawGame(playerIndex int) string {
 	row := ""
 
 	row += fmt.Sprintf("Score: %s | Trump: %s | Round: %d", score, trump, roundsCount)
-	row += strings.Repeat(" ", width - len(row)) + "\n"
+	row += strings.Repeat(" ", width-len(row)) + "\n"
 	ui += row
 
 	row = ""
 	row += fmt.Sprintf("Round Score: %s", roundScore)
-	row += strings.Repeat(" ", width - len(row)) + "\n"
+	row += strings.Repeat(" ", width-len(row)) + "\n"
 
 	ui += row + "\n"
 	ui += strings.Repeat("-", width) + "\n"
@@ -57,13 +57,13 @@ func (b *Bot) drawGame(playerIndex int) string {
 }
 
 func alignCenter(text string) string {
-	spaces := strings.Repeat(" ", (width - len(text)) / 2)
+	spaces := strings.Repeat(" ", (width-len(text))/2)
 
 	return spaces + text + spaces
 }
 
 func spaceBetween(nickName1 string, card1 squirrel.Card, card3 squirrel.Card, nickName3 string) string {
-	result := nickName1 + strings.Repeat(" ", width / 2 - len(nickName1) - len([]rune(card1.Symbol())) - boardUnit) +
+	result := nickName1 + strings.Repeat(" ", width/2-len(nickName1)-len([]rune(card1.Symbol()))-boardUnit) +
 		card1.Symbol()
 	result += strings.Repeat(" ", boardUnit)
 
@@ -73,18 +73,22 @@ func spaceBetween(nickName1 string, card1 squirrel.Card, card3 squirrel.Card, ni
 	if !card3.IsEmpty() {
 		if !card1.IsEmpty() {
 			boardDelta = 17
-			thirdCardDelta = 10
+			thirdCardDelta = 9
+			thirdCardDelta -= len(nickName3) - 3
 		} else {
-			thirdCardDelta = 8
+			thirdCardDelta = 7
+			thirdCardDelta -= len(nickName3) - 3
 		}
 	} else {
 		if !card1.IsEmpty() {
-			boardDelta = 34
+			boardDelta = 31
 		}
 	}
 
-	result += strings.Repeat(" ", boardUnit +boardDelta)
-	result += card3.Symbol() + strings.Repeat(" ", width / 2 - len(nickName3) - len([]rune(card3.Symbol())) - boardUnit +thirdCardDelta) + nickName3
+	result += strings.Repeat(" ", boardUnit+boardDelta)
+	result += card3.Symbol() +
+		strings.Repeat(" ", width/2-len(nickName3)-len([]rune(card3.Symbol()))-boardUnit+thirdCardDelta) +
+		nickName3
 
 	return result
 }

@@ -58,7 +58,7 @@ func (b *Bot) draw() {
 			MessageID:   b.game.Players[0].Message,
 			ReplyMarkup: &keyboard,
 		},
-		Text: ui,
+		Text:      ui,
 		ParseMode: "MarkdownV2",
 	}
 
