@@ -29,6 +29,21 @@ const (
 	clubs
 )
 
+func (s CardSuit) String() string {
+	switch s {
+	case spades:
+		return "♠"
+	case clubs:
+		return "♣"
+	case hearts:
+		return "♥"
+	case diamonds:
+		return "♦"
+	default:
+		return "-"
+	}
+}
+
 // Card represents any card deck of 32 cards which are combinations of all CardValue and CardSuit
 type Card uint8
 
@@ -99,7 +114,7 @@ func shuffledDeck() []Card {
 
 func (c Card) Symbol() string {
 	if c == emptyCard {
-		return "EM"
+		return ""
 	}
 
 	result := ""
@@ -123,16 +138,7 @@ func (c Card) Symbol() string {
 		result += "A"
 	}
 
-	switch c.suit() {
-	case spades:
-		result += "♠"
-	case clubs:
-		result += "♣"
-	case hearts:
-		result += "♥"
-	case diamonds:
-		result += "♦"
-	}
+	result += c.suit().String()
 
 	return result
 }

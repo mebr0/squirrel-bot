@@ -13,9 +13,9 @@ func NewLogger(levelString string) (*zap.Logger, error) {
 	}
 
 	cfg := zap.Config{
-		Level: zap.NewAtomicLevelAt(level),
+		Level:             zap.NewAtomicLevelAt(level),
 		DisableStacktrace: true,
-		Encoding: "console",
+		Encoding:          "console",
 		EncoderConfig: zapcore.EncoderConfig{
 			TimeKey:        "T",
 			LevelKey:       "L",
@@ -42,4 +42,3 @@ func NewLogger(levelString string) (*zap.Logger, error) {
 
 	return logger, nil
 }
-

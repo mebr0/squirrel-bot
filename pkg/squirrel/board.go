@@ -48,20 +48,6 @@ func (b *Board) bottom() (Card, error) {
 	return b.Cards[b.BottomIndex], nil
 }
 
-func (b *Board) BottomSuit() (CardSuit, error) {
-	bottom, err := b.bottom()
-
-	if err != nil {
-		return 0, err
-	}
-
-	if bottom.IsEmpty() {
-		return 0, ErrEmptyBoard
-	}
-
-	return b.Cards[b.BottomIndex].suit(), nil
-}
-
 func (b *Board) throw(index uint8, card Card) {
 	b.Cards[index] = card
 
@@ -221,4 +207,14 @@ func (b *Board) greatestCard() Card {
 
 func (b *Board) roundFinished() bool {
 	return b.Round.finished()
+}
+
+func (b *Board) ShiftedCards(index int) [playersCount]Card {
+	shifted := append(b.Cards[index:], b.Cards[:index]...)
+
+	var cards [playersCount]Card
+
+	copy(cards[:], shifted)
+
+	return cards
 }

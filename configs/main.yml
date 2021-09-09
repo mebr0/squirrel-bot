@@ -3,4 +3,5 @@ log:
 telegram:
   bot-token: <token>
 game:
+  debug: true
   speed: 1s

@@ -13,24 +13,13 @@ type Game struct {
 	RoundsCount uint8
 }
 
-func NewGame(playerIDs [playersCount]int64) *Game {
-	var players [playersCount]*Player
-
-	for i, id := range playerIDs {
-		if id == -1 {
-			players[i] = newBot()
-			continue
-		}
-
-		players[i] = newPlayer(id)
-	}
-
+func NewGameWithBots(player *Player) *Game {
 	return &Game{
-		Players: (*Players)(&players),
+		Players: newWithBots(player),
 		Score:   newScore(),
 		Board:   newBoard(),
 
-		RoundsCount: 0,
+		RoundsCount: 1,
 	}
 }
 
@@ -180,7 +169,7 @@ func (g *Game) nextRound() error {
 
 	g.RoundsCount += 1
 
-	g.Board.refresh(g.RoundsCount)
+	g.Board.refresh(g.RoundsCount - 1)
 
 	return nil
 }

@@ -34,10 +34,8 @@ func Run(configPath string) {
 		log.Fatal("error initializing telegram client - " + err.Error())
 	}
 
-	//botApi.Debug = true
-
 	// Telegram bot
-	bot := telegram.NewBot(botApi, log, cfg.Game.Speed)
+	bot := telegram.NewBot(botApi, log, cfg.Game)
 	go func() {
 		if err = bot.Start(); err != nil {
 			log.Fatal("error while bot polling - " + err.Error())
