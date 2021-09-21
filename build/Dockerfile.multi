@@ -23,5 +23,6 @@ WORKDIR /root/
 
 COPY --from=builder /root/app .
 COPY --from=builder /root/configs configs/
+COPY --from=builder /root/db db/
 
 CMD ["./app"]
