@@ -49,3 +49,61 @@ func (mr *MockPlayersMockRecorder) CreateOrUpdate(ctx, player interface{}) *gomo
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOrUpdate", reflect.TypeOf((*MockPlayers)(nil).CreateOrUpdate), ctx, player)
 }
+
+// MockGames is a mock of Games interface.
+type MockGames struct {
+	ctrl     *gomock.Controller
+	recorder *MockGamesMockRecorder
+}
+
+// MockGamesMockRecorder is the mock recorder for MockGames.
+type MockGamesMockRecorder struct {
+	mock *MockGames
+}
+
+// NewMockGames creates a new mock instance.
+func NewMockGames(ctrl *gomock.Controller) *MockGames {
+	mock := &MockGames{ctrl: ctrl}
+	mock.recorder = &MockGamesMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGames) EXPECT() *MockGamesMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method.
+func (m *MockGames) Create(ctx context.Context, toCreate domain.GameToCreate, players ...domain.PlayerTeam) (domain.Game, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, toCreate}
+	for _, a := range players {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Create", varargs...)
+	ret0, _ := ret[0].(domain.Game)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockGamesMockRecorder) Create(ctx, toCreate interface{}, players ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, toCreate}, players...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockGames)(nil).Create), varargs...)
+}
+
+// List mocks base method.
+func (m *MockGames) List(ctx context.Context, playerID int64) ([]domain.Game, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "List", ctx, playerID)
+	ret0, _ := ret[0].([]domain.Game)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// List indicates an expected call of List.
+func (mr *MockGamesMockRecorder) List(ctx, playerID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockGames)(nil).List), ctx, playerID)
+}

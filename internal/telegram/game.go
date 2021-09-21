@@ -1,8 +1,10 @@
 package telegram
 
 import (
+	"context"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/google/uuid"
+	"github.com/mebr0/squirrel-bot/internal/domain"
 	"github.com/mebr0/squirrel-bot/pkg/squirrel"
 	"time"
 )
@@ -40,6 +42,33 @@ func (b *Bot) processGame(gameId uuid.UUID) error {
 	}
 
 	b.drawLast(gameId)
+
+	ctx := context.Background()
+	toCreate := domain.GameToCreate{
+		ID:     gameId.String(),
+		Score1: b.games[gameId].Score.First,
+		Score2: b.games[gameId].Score.Second,
+		Rounds: b.games[gameId].RoundsCount,
+	}
+
+	players := make([]domain.PlayerTeam, 0)
+
+	for i, p := range b.games[gameId].Players {
+		if p.Bot {
+			continue
+		}
+
+		players = append(players, domain.PlayerTeam{
+			ID:   p.ID,
+			Team: uint8(i%2 + 1),
+		})
+	}
+
+	if _, err = b.services.Games.Save(ctx, toCreate, players...); err != nil {
+		return err
+	}
+
+	b.log.Info("game with id " + gameId.String() + " saved")
 
 	return squirrel.ErrGameFinished
 }

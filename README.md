@@ -11,6 +11,13 @@ LOG_LEVEL=INFO
 
 TELEGRAM_BOT_TOKEN=<token>
 
+DB_HOST=<host>
+DB_PORT=<port
+DB_NAME=<database>
+DB_USER=<username>
+DB_PASSWORD=<password>
+DB_SSL_MODE=<mode>
+
 GAME_SPEED=<speed>
 ```
 

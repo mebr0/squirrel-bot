@@ -11,20 +11,20 @@ import (
 )
 
 type Bot struct {
-	bot    *tgbotapi.BotAPI
-	games  map[uuid.UUID]*squirrel.Game
+	bot      *tgbotapi.BotAPI
+	games    map[uuid.UUID]*squirrel.Game
 	services *service.Services
-	log    *zap.Logger
-	config config.Game
+	log      *zap.Logger
+	config   config.Game
 }
 
 func NewBot(bot *tgbotapi.BotAPI, services *service.Services, log *zap.Logger, config config.Game) *Bot {
 	return &Bot{
-		bot:    bot,
+		bot:      bot,
 		services: services,
-		games:  map[uuid.UUID]*squirrel.Game{},
-		log:    log,
-		config: config,
+		games:    map[uuid.UUID]*squirrel.Game{},
+		log:      log,
+		config:   config,
 	}
 }
 

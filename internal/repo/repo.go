@@ -14,12 +14,21 @@ type Players interface {
 	CreateOrUpdate(ctx context.Context, player domain.Player) (domain.Player, error)
 }
 
+type Games interface {
+	// List games of single player
+	List(ctx context.Context, playerID int64) ([]domain.Game, error)
+	// Create game results in database
+	Create(ctx context.Context, toCreate domain.GameToCreate, players ...domain.PlayerTeam) (domain.Game, error)
+}
+
 type Repos struct {
 	Players
+	Games
 }
 
 func NewRepos(db *sqlx.DB) *Repos {
 	return &Repos{
 		Players: newPlayersRepo(db),
+		Games:   newGamesRepo(db),
 	}
 }
