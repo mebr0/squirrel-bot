@@ -2,6 +2,13 @@ log:
   level: <level>
 telegram:
   bot-token: <token>
+db:
+  host: <host>
+  port: <port>
+  name: <db name>
+  user: <username>
+  password: <password>
+  ssl-mode: <mode>
 game:
   debug: true
   speed: 1s

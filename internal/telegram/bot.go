@@ -5,6 +5,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/google/uuid"
 	"github.com/mebr0/squirrel-bot/internal/config"
+	"github.com/mebr0/squirrel-bot/internal/service"
 	"github.com/mebr0/squirrel-bot/pkg/squirrel"
 	"go.uber.org/zap"
 )
@@ -12,13 +13,15 @@ import (
 type Bot struct {
 	bot    *tgbotapi.BotAPI
 	games  map[uuid.UUID]*squirrel.Game
+	services *service.Services
 	log    *zap.Logger
 	config config.Game
 }
 
-func NewBot(bot *tgbotapi.BotAPI, log *zap.Logger, config config.Game) *Bot {
+func NewBot(bot *tgbotapi.BotAPI, services *service.Services, log *zap.Logger, config config.Game) *Bot {
 	return &Bot{
 		bot:    bot,
+		services: services,
 		games:  map[uuid.UUID]*squirrel.Game{},
 		log:    log,
 		config: config,
