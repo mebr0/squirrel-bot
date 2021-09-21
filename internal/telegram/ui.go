@@ -4,6 +4,7 @@ import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/google/uuid"
+	"github.com/mebr0/squirrel-bot/internal/domain"
 	"github.com/mebr0/squirrel-bot/pkg/squirrel"
 	"strings"
 )
@@ -12,6 +13,16 @@ const (
 	width     = 40
 	boardUnit = 7
 )
+
+func (b *Bot) lineGames(games []domain.Game) string {
+	res := ""
+
+	for i, g := range games {
+		res += fmt.Sprintf("%d. Score: %d : %d. Rounds count: %d\n", i+1, g.Score1, g.Score2, g.Rounds)
+	}
+
+	return res
+}
 
 func (b *Bot) drawGame(gameId uuid.UUID, playerIndex int, finished bool) string {
 	game := b.games[gameId]

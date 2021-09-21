@@ -23,6 +23,15 @@ type Config struct {
 		BotToken string `yaml:"bot-token" envconfig:"TELEGRAM_BOT_TOKEN"`
 	} `yaml:"telegram"`
 
+	DB struct {
+		Host     string `yaml:"host" envconfig:"DB_HOST"`
+		Port     string `yaml:"port" envconfig:"DB_PORT"`
+		Name     string `yaml:"name" envconfig:"DB_NAME"`
+		User     string `yaml:"user" envconfig:"DB_USER"`
+		Password string `yaml:"password" envconfig:"DB_PASSWORD"`
+		SSLMode  string `yaml:"ssl-mode" envconfig:"DB_SSL_MODE"`
+	} `yaml:"db"`
+
 	Game Game `yaml:"game"`
 }
 
